@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lenguaje C - Grado 7° | Docente Juan Adrián Villani</title>
+<style>
+  :root{
+    --verde:#17692f;
+    --verde2:#1f8a3d;
+    --verde-suave:#e8f4ea;
+    --amarillo:#f2c200;
+    --amarillo-suave:#fff7d6;
+    --texto:#1d2b21;
+    --gris:#5b6b60;
+    --borde:#dfe8e1;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--texto);
+    background:linear-gradient(160deg,#eef5ef 0%,#e2efe6 100%);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+
+  /* ================= ENCABEZADO FIJO (imágenes en todas las diapositivas) ================= */
+  header{
+    flex:0 0 auto;height:62px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 16px;gap:12px;
+    background:#ffffff;
+    border-bottom:3px solid var(--amarillo);
+    box-shadow:0 2px 10px rgba(0,0,0,.07);
+    position:relative;z-index:50;
+  }
+  .h-left,.h-right{display:flex;align-items:center;gap:10px;min-width:0;}
+  .h-left img.escudo{height:42px;width:42px;object-fit:contain;flex:0 0 auto;}
+  .h-left .colegio{font-weight:700;font-size:14px;color:var(--verde);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .h-left .colegio small{display:block;font-weight:500;font-size:11px;color:var(--gris);}
+  .h-right img.gubi{height:44px;width:auto;object-fit:contain;flex:0 0 auto;}
+  .h-right .docente{font-size:12.5px;font-weight:600;color:var(--verde);text-align:right;line-height:1.2;white-space:nowrap;}
+  .h-right .docente small{display:block;font-weight:500;color:var(--gris);font-size:11px;}
+
+  /* ================= ZONA DE DIAPOSITIVAS ================= */
+  main#deck{flex:1 1 auto;position:relative;overflow:hidden;}
+  .slide{
+    position:absolute;inset:14px 20px;
+    background:#fff;border-radius:18px;
+    box-shadow:0 10px 30px rgba(20,60,35,.13);
+    padding:26px 38px 34px;
+    overflow-y:auto;display:none;
+  }
+  .slide.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .slide::-webkit-scrollbar{width:9px;}
+  .slide::-webkit-scrollbar-thumb{background:#c6d9cb;border-radius:9px;}
+
+  h1.titulo{
+    font-size:clamp(22px,2.6vw,32px);color:var(--verde);margin:0 0 6px;
+    padding-bottom:10px;border-bottom:4px solid var(--amarillo);
+    line-height:1.2;
+  }
+  h2.sub{font-size:19px;color:var(--verde2);margin:20px 0 8px;}
+  h3.mini{font-size:16px;color:var(--verde);margin:14px 0 6px;}
+  p{line-height:1.6;margin:8px 0;font-size:16px;}
+  ul.lista{list-style:none;padding-left:0;margin:8px 0;}
+  ul.lista li{
+    position:relative;padding-left:22px;margin:7px 0;line-height:1.55;font-size:16px;
+  }
+  ul.lista li::before{content:"–";position:absolute;left:4px;color:var(--verde2);font-weight:800;}
+  ul.lista li ul{list-style:none;padding-left:0;margin-top:5px;}
+  ul.lista li ul li::before{content:"·";color:var(--amarillo);}
+
+  .chip{
+    display:inline-block;background:var(--amarillo-suave);color:#8a6d00;
+    border:1px solid #f0d878;border-radius:20px;
+    padding:3px 12px;font-size:12px;font-weight:700;margin:0 6px 6px 0;
+  }
+  .chip.verde{background:var(--verde-suave);color:var(--verde);border-color:#bfe0c8;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--verde-suave);border-left:6px solid var(--verde2);
+    border-radius:12px;padding:14px 18px;
+  }
+  .card.amarillo{background:var(--amarillo-suave);border-left-color:var(--amarillo);}
+  .card.gris{background:#f4f7f4;border-left-color:#9db3a4;}
+  .card h3{margin:0 0 6px;font-size:16px;color:var(--verde);}
+  .card p,.card li{font-size:15px;}
+
+  pre{
+    background:#12251a;color:#e9f6ed;border-radius:12px;
+    border-left:6px solid var(--amarillo);
+    padding:15px 18px;margin:10px 0;
+    font-family:"Consolas","Courier New",monospace;
+    font-size:14.5px;line-height:1.55;overflow-x:auto;
+  }
+  pre .com{color:#8fbf9b;font-style:italic;}
+  code.inline{
+    background:#eef4ef;color:#14602b;padding:2px 7px;border-radius:6px;
+    font-family:"Consolas","Courier New",monospace;font-size:14.5px;font-weight:600;
+  }
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px;}
+  th,td{border:1px solid var(--borde);padding:9px 12px;text-align:left;}
+  th{background:var(--verde);color:#fff;font-weight:600;}
+  tr:nth-child(even) td{background:#f7faf7;}
+
+  /* Portada */
+  .portada{text-align:center;padding-top:22px;}
+  .portada .logo-grande{height:110px;margin-bottom:14px;}
+  .portada h1{
+    font-size:clamp(26px,3.6vw,44px);color:var(--verde);margin:10px 0 6px;line-height:1.15;
+  }
+  .portada .lema{font-size:18px;color:var(--gris);font-style:italic;margin-bottom:22px;}
+  .portada .datos{
+    display:inline-block;background:var(--verde-suave);border-radius:16px;
+    padding:18px 34px;text-align:left;border:2px dashed #b9dcc4;
+  }
+  .portada .datos p{margin:6px 0;font-size:17px;}
+  .portada .datos b{color:var(--verde);}
+  .portada .gubi-grande{height:150px;margin-top:16px;}
+
+  /* Frases */
+  .frase{
+    background:linear-gradient(135deg,#f8fdf9,#eaf6ee);
+    border-left:8px solid var(--amarillo);
+    border-radius:14px;padding:16px 22px;margin:14px 0;
+  }
+  .frase .cita{font-size:16.5px;line-height:1.6;font-style:italic;color:#243b2c;}
+  .frase .ref{display:block;margin-top:8px;font-weight:800;color:var(--verde);font-size:14.5px;font-style:normal;}
+
+  /* Paso a paso */
+  .paso{
+    display:flex;gap:14px;align-items:flex-start;
+    background:#f7faf7;border-radius:12px;padding:12px 16px;margin:10px 0;
+    border-left:6px solid var(--verde2);
+  }
+  .paso .num{
+    flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+    background:var(--verde);color:#fff;font-weight:800;
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+  }
+  .paso .txt{font-size:15.5px;line-height:1.55;}
+  .paso .txt b{color:var(--verde);}
+
+  /* ================= PIE DE NAVEGACIÓN ================= */
+  #barra{height:6px;background:#dbe6de;position:relative;flex:0 0 auto;}
+  #barra span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--verde2),var(--amarillo));transition:width .3s ease;}
+  footer{
+    flex:0 0 auto;height:56px;background:#fff;border-top:1px solid var(--borde);
+    display:flex;align-items:center;justify-content:space-between;padding:0 18px;gap:12px;
+  }
+  .nav-btn{
+    background:var(--verde);color:#fff;border:none;border-radius:10px;
+    padding:9px 18px;font-size:14.5px;font-weight:700;cursor:pointer;transition:.2s;
+  }
+  .nav-btn:hover{background:var(--verde2);transform:translateY(-1px);}
+  .nav-btn:disabled{background:#c3d2c7;cursor:not-allowed;transform:none;}
+  #contador{font-weight:800;color:var(--verde);font-size:14.5px;font-family:"Consolas",monospace;}
+  .pista{font-size:12px;color:var(--gris);}
+  @media(max-width:700px){.pista{display:none;} .h-left .colegio small{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- ===== ENCABEZADO: imágenes presentes en todas las diapositivas ===== -->
+<header>
+  <div class="h-left">
+    <img class="escudo" src="aa%20Escudo%20Colegio.png" alt="Escudo Colegio San Francisco de Asís">
+    <div class="colegio">
+      Colegio San Francisco de Asís
+      <small>Cali – Colombia · Tecnología e Informática</small>
+    </div>
+  </div>
+  <div class="h-right">
+    <div class="docente">
+      Grado 7°
+      <small>Docente: Juan Adrián Villani</small>
+    </div>
+    <img class="gubi" src="gubi.png" alt="Mascota Gubi">
+  </div>
+</header>
+
+<main id="deck">
+
+  <!-- ================= 1. PORTADA ================= -->
+  <section class="slide active">
+    <div class="portada">
+      <img class="logo-grande" src="aa%20Escudo%20Colegio.png" alt="Escudo del colegio">
+      <h1>Lenguaje C: Decisiones que transforman</h1>
+      <p class="lema">Estructuras condicionales y soluciones para la comunidad</p>
+
+      <div class="datos">
+        <p><b>Docente:</b> Juan Adrián Villani</p>
+        <p><b>Grado:</b> 7°</p>
+        <p><b>Área:</b> Tecnología e Informática – Lenguaje C</p>
+        <p><b>Semana:</b> Octubre 13 – 16</p>
+        <p><b>Herramientas:</b> Visual Studio Code o Sublime Text</p>
+      </div>
+
+      <div>
+        <img class="gubi-grande" src="gubi.png" alt="Mascota Gubi">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="barra"><span id="barraFill"></span></div>
+
+<footer>
+  <button class="nav-btn" id="btnPrev">◀ Anterior</button>
+  <span class="pista">Usa las flechas ← → o la barra espaciadora para navegar</span>
+  <span id="contador">1 / 15</span>
+  <button class="nav-btn" id="btnNext">Siguiente ▶</button>
+</footer>
+
+<script>
+  const slides   = document.querySelectorAll('.slide');
+  const barra    = document.getElementById('barraFill');
+  const contador = document.getElementById('contador');
+  const btnPrev  = document.getElementById('btnPrev');
+  const btnNext  = document.getElementById('btnNext');
+  let actual = 0;
+
+  function mostrar(i){
+    if (i < 0) i = 0;
+    if (i > slides.length - 1) i = slides.length - 1;
+    actual = i;
+
+    slides.forEach((s, k) => s.classList.toggle('active', k === actual));
+
+    contador.textContent = (actual + 1) + ' / ' + slides.length;
+    barra.style.width = ((actual + 1) / slides.length * 100) + '%';
+    btnPrev.disabled = (actual === 0);
+    btnNext.disabled = (actual === slides.length - 1);
+
+    slides[actual].scrollTop = 0;
+  }
+
+  btnPrev.addEventListener('click', () => mostrar(actual - 1));
+  btnNext.addEventListener('click', () => mostrar(actual + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault(); mostrar(actual + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); mostrar(actual - 1);
+    }
+    if (e.key === 'Home') { e.preventDefault(); mostrar(0); }
+    if (e.key === 'End')  { e.preventDefault(); mostrar(slides.length - 1); }
+  });
+
+  mostrar(0);
+</script>
+</body>
+</html>
