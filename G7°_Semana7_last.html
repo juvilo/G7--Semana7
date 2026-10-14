@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lenguaje C - Grado 7° | Docente Juan Adrián Villani</title>
+<style>
+  :root{
+    --verde:#17692f;
+    --verde2:#1f8a3d;
+    --verde-suave:#e8f4ea;
+    --amarillo:#f2c200;
+    --amarillo-suave:#fff7d6;
+    --texto:#1d2b21;
+    --gris:#5b6b60;
+    --borde:#dfe8e1;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--texto);
+    background:linear-gradient(160deg,#eef5ef 0%,#e2efe6 100%);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+
+  /* ================= ENCABEZADO FIJO (imágenes en todas las diapositivas) ================= */
+  header{
+    flex:0 0 auto;height:62px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 16px;gap:12px;
+    background:#ffffff;
+    border-bottom:3px solid var(--amarillo);
+    box-shadow:0 2px 10px rgba(0,0,0,.07);
+    position:relative;z-index:50;
+  }
+  .h-left,.h-right{display:flex;align-items:center;gap:10px;min-width:0;}
+  .h-left img.escudo{height:42px;width:42px;object-fit:contain;flex:0 0 auto;}
+  .h-left .colegio{font-weight:700;font-size:14px;color:var(--verde);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .h-left .colegio small{display:block;font-weight:500;font-size:11px;color:var(--gris);}
+  .h-right img.gubi{height:44px;width:auto;object-fit:contain;flex:0 0 auto;}
+  .h-right .docente{font-size:12.5px;font-weight:600;color:var(--verde);text-align:right;line-height:1.2;white-space:nowrap;}
+  .h-right .docente small{display:block;font-weight:500;color:var(--gris);font-size:11px;}
+
+  /* ================= ZONA DE DIAPOSITIVAS ================= */
+  main#deck{flex:1 1 auto;position:relative;overflow:hidden;}
+  .slide{
+    position:absolute;inset:14px 20px;
+    background:#fff;border-radius:18px;
+    box-shadow:0 10px 30px rgba(20,60,35,.13);
+    padding:26px 38px 34px;
+    overflow-y:auto;display:none;
+  }
+  .slide.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .slide::-webkit-scrollbar{width:9px;}
+  .slide::-webkit-scrollbar-thumb{background:#c6d9cb;border-radius:9px;}
+
+  h1.titulo{
+    font-size:clamp(22px,2.6vw,32px);color:var(--verde);margin:0 0 6px;
+    padding-bottom:10px;border-bottom:4px solid var(--amarillo);
+    line-height:1.2;
+  }
+  h2.sub{font-size:19px;color:var(--verde2);margin:20px 0 8px;}
+  h3.mini{font-size:16px;color:var(--verde);margin:14px 0 6px;}
+  p{line-height:1.6;margin:8px 0;font-size:16px;}
+  ul.lista{list-style:none;padding-left:0;margin:8px 0;}
+  ul.lista li{
+    position:relative;padding-left:22px;margin:7px 0;line-height:1.55;font-size:16px;
+  }
+  ul.lista li::before{content:"–";position:absolute;left:4px;color:var(--verde2);font-weight:800;}
+  ul.lista li ul{list-style:none;padding-left:0;margin-top:5px;}
+  ul.lista li ul li::before{content:"·";color:var(--amarillo);}
+
+  .chip{
+    display:inline-block;background:var(--amarillo-suave);color:#8a6d00;
+    border:1px solid #f0d878;border-radius:20px;
+    padding:3px 12px;font-size:12px;font-weight:700;margin:0 6px 6px 0;
+  }
+  .chip.verde{background:var(--verde-suave);color:var(--verde);border-color:#bfe0c8;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--verde-suave);border-left:6px solid var(--verde2);
+    border-radius:12px;padding:14px 18px;
+  }
+  .card.amarillo{background:var(--amarillo-suave);border-left-color:var(--amarillo);}
+  .card.gris{background:#f4f7f4;border-left-color:#9db3a4;}
+  .card h3{margin:0 0 6px;font-size:16px;color:var(--verde);}
+  .card p,.card li{font-size:15px;}
+
+  pre{
+    background:#12251a;color:#e9f6ed;border-radius:12px;
+    border-left:6px solid var(--amarillo);
+    padding:15px 18px;margin:10px 0;
+    font-family:"Consolas","Courier New",monospace;
+    font-size:14.5px;line-height:1.55;overflow-x:auto;
+  }
+  pre .com{color:#8fbf9b;font-style:italic;}
+  code.inline{
+    background:#eef4ef;color:#14602b;padding:2px 7px;border-radius:6px;
+    font-family:"Consolas","Courier New",monospace;font-size:14.5px;font-weight:600;
+  }
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:15px;}
+  th,td{border:1px solid var(--borde);padding:9px 12px;text-align:left;}
+  th{background:var(--verde);color:#fff;font-weight:600;}
+  tr:nth-child(even) td{background:#f7faf7;}
+
+  /* Portada */
+  .portada{text-align:center;padding-top:22px;}
+  .portada .logo-grande{height:110px;margin-bottom:14px;}
+  .portada h1{
+    font-size:clamp(26px,3.6vw,44px);color:var(--verde);margin:10px 0 6px;line-height:1.15;
+  }
+  .portada .lema{font-size:18px;color:var(--gris);font-style:italic;margin-bottom:22px;}
+  .portada .datos{
+    display:inline-block;background:var(--verde-suave);border-radius:16px;
+    padding:18px 34px;text-align:left;border:2px dashed #b9dcc4;
+  }
+  .portada .datos p{margin:6px 0;font-size:17px;}
+  .portada .datos b{color:var(--verde);}
+  .portada .gubi-grande{height:150px;margin-top:16px;}
+
+  /* Frases */
+  .frase{
+    background:linear-gradient(135deg,#f8fdf9,#eaf6ee);
+    border-left:8px solid var(--amarillo);
+    border-radius:14px;padding:16px 22px;margin:14px 0;
+  }
+  .frase .cita{font-size:16.5px;line-height:1.6;font-style:italic;color:#243b2c;}
+  .frase .ref{display:block;margin-top:8px;font-weight:800;color:var(--verde);font-size:14.5px;font-style:normal;}
+
+  /* Paso a paso */
+  .paso{
+    display:flex;gap:14px;align-items:flex-start;
+    background:#f7faf7;border-radius:12px;padding:12px 16px;margin:10px 0;
+    border-left:6px solid var(--verde2);
+  }
+  .paso .num{
+    flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+    background:var(--verde);color:#fff;font-weight:800;
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+  }
+  .paso .txt{font-size:15.5px;line-height:1.55;}
+  .paso .txt b{color:var(--verde);}
+
+  /* ================= PIE DE NAVEGACIÓN ================= */
+  #barra{height:6px;background:#dbe6de;position:relative;flex:0 0 auto;}
+  #barra span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--verde2),var(--amarillo));transition:width .3s ease;}
+  footer{
+    flex:0 0 auto;height:56px;background:#fff;border-top:1px solid var(--borde);
+    display:flex;align-items:center;justify-content:space-between;padding:0 18px;gap:12px;
+  }
+  .nav-btn{
+    background:var(--verde);color:#fff;border:none;border-radius:10px;
+    padding:9px 18px;font-size:14.5px;font-weight:700;cursor:pointer;transition:.2s;
+  }
+  .nav-btn:hover{background:var(--verde2);transform:translateY(-1px);}
+  .nav-btn:disabled{background:#c3d2c7;cursor:not-allowed;transform:none;}
+  #contador{font-weight:800;color:var(--verde);font-size:14.5px;font-family:"Consolas",monospace;}
+  .pista{font-size:12px;color:var(--gris);}
+  @media(max-width:700px){.pista{display:none;} .h-left .colegio small{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- ===== ENCABEZADO: imágenes presentes en todas las diapositivas ===== -->
+<header>
+  <div class="h-left">
+    <img class="escudo" src="aa%20Escudo%20Colegio.png" alt="Escudo Colegio San Francisco de Asís">
+    <div class="colegio">
+      Colegio San Francisco de Asís
+      <small>Cali – Colombia · Tecnología e Informática</small>
+    </div>
+  </div>
+  <div class="h-right">
+    <div class="docente">
+      Grado 7°
+      <small>Docente: Juan Adrián Villani</small>
+    </div>
+    <img class="gubi" src="gubi.png" alt="Mascota Gubi">
+  </div>
+</header>
+
+<main id="deck">
+
+  <!-- ================= 1. PORTADA ================= -->
+  <section class="slide active">
+    <div class="portada">
+      <img class="logo-grande" src="aa%20Escudo%20Colegio.png" alt="Escudo del colegio">
+      <h1>Lenguaje C: Decisiones que transforman</h1>
+      <p class="lema">Estructuras condicionales y soluciones para la comunidad</p>
+
+      <div class="datos">
+        <p><b>Docente:</b> Juan Adrián Villani</p>
+        <p><b>Grado:</b> 7°</p>
+        <p><b>Área:</b> Tecnología e Informática – Lenguaje C</p>
+        <p><b>Semana:</b> Octubre 13 – 16</p>
+        <p><b>Herramientas:</b> Visual Studio Code o Sublime Text</p>
+      </div>
+
+      <div>
+        <img class="gubi-grande" src="gubi.png" alt="Mascota Gubi">
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2. FRASES ================= -->
+  <section class="slide">
+    <h1 class="titulo">Frases</h1>
+    <p>Iniciamos nuestra jornada poniendo todo lo que hacemos en manos de Dios.</p>
+
+    <div class="frase">
+      <span class="cita">«Y todo lo que hacéis, sea de palabra o de hecho, hacedlo todo en el nombre del Señor Jesús, dando gracias a Dios Padre por medio de él».</span>
+      <span class="ref">Colosenses 3:17</span>
+    </div>
+
+    <div class="frase">
+      <span class="cita">«Alabad a Jehová, porque él es bueno; porque para siempre es su misericordia».</span>
+      <span class="ref">Salmo 107:1</span>
+    </div>
+
+    <div class="frase">
+      <span class="cita">«Estén siempre alegres, oren sin cesar, den gracias a Dios en toda situación, porque esta es su voluntad para ustedes en Cristo Jesús».</span>
+      <span class="ref">1 Tesalonicenses 5:16-18</span>
+    </div>
+  </section>
+
+  <!-- ================= 3. ENTORNO ================= -->
+  <section class="slide">
+    <h1 class="titulo">Nuestro entorno: VS Code o Sublime Text</h1>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Pasos para trabajar en clase</h3>
+        <ul class="lista">
+          <li>Abrir VS Code o Sublime Text.</li>
+          <li>Crear la carpeta <code class="inline">Grado7_LenguajeC</code>.</li>
+          <li>Crear el archivo <code class="inline">programa01.c</code>.</li>
+          <li>Guardar con extensión <b>.c</b> (muy importante).</li>
+          <li>Escribir el código y guardar con <b>Ctrl + S</b>.</li>
+        </ul>
+      </div>
+
+      <div class="card gris">
+        <h3>Compilar y ejecutar en la terminal</h3>
+        <pre>gcc programa01.c -o programa01
+
+<span class="com"># En Windows:</span>
+programa01.exe
+
+<span class="com"># En Linux o Mac:</span>
+./programa01</pre>
+        <p>Si no aparece ningún mensaje de error, ¡el programa quedó bien escrito!</p>
+      </div>
+    </div>
+
+    <div class="card amarillo">
+      <h3>Consejo de la clase</h3>
+      <p>Compila después de escribir pocas líneas. Así descubres los errores rápido y es más fácil corregirlos.</p>
+    </div>
+  </section>
+
+  <!-- ================= 4. QUÉ ES UNA DECISIÓN ================= -->
+  <section class="slide">
+    <h1 class="titulo">¿Qué es tomar una decisión en un programa?</h1>
+    <span class="chip verde">Guía 6 – Estructuras Selectivas</span>
+
+    <p>En la vida diaria tomamos decisiones todo el tiempo. Por ejemplo:</p>
+
+    <div class="paso">
+      <div class="num">?</div>
+      <div class="txt"><b>Si</b> está lloviendo, entonces llevo paraguas. <b>Si no</b>, salgo sin paraguas.</div>
+    </div>
+    <div class="paso">
+      <div class="num">?</div>
+      <div class="txt"><b>Si</b> mi nota es mayor o igual a 3.0, entonces apruebo. <b>Si no</b>, repruebo.</div>
+    </div>
+
+    <p style="margin-top:16px;">En lenguaje C esto se escribe con <b>estructuras condicionales</b>: el programa decide qué instrucciones ejecutar.</p>
+
+    <div class="card">
+      <h3>Las tres formas que veremos hoy</h3>
+      <ul class="lista">
+        <li><b>if</b> → cuando solo hay una posibilidad.</li>
+        <li><b>if – else</b> → cuando hay dos caminos.</li>
+        <li><b>if – else if – else</b> → cuando hay tres o más caminos.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= 5. OPERADORES ================= -->
+  <section class="slide">
+    <h1 class="titulo">Operadores que usamos en las condiciones</h1>
+    <span class="chip verde">Guía 6 – Estructuras Selectivas</span>
+
+    <h2 class="sub">1) Operadores relacionales (comparan dos valores)</h2>
+    <table>
+      <tr><th>Operador</th><th>Se lee como</th><th>Ejemplo</th></tr>
+      <tr><td><code class="inline">==</code></td><td>igual a</td><td><code class="inline">nota == 5</code></td></tr>
+      <tr><td><code class="inline">!=</code></td><td>diferente de</td><td><code class="inline">nota != 0</code></td></tr>
+      <tr><td><code class="inline">&gt;</code></td><td>mayor que</td><td><code class="inline">edad &gt; 18</code></td></tr>
+      <tr><td><code class="inline">&lt;</code></td><td>menor que</td><td><code class="inline">peso &lt; 50</code></td></tr>
+      <tr><td><code class="inline">&gt;=</code></td><td>mayor o igual que</td><td><code class="inline">nota &gt;= 3.0</code></td></tr>
+      <tr><td><code class="inline">&lt;=</code></td><td>menor o igual que</td><td><code class="inline">edad &lt;= 12</code></td></tr>
+    </table>
+
+    <h2 class="sub">2) Operadores lógicos (combinan condiciones)</h2>
+    <table>
+      <tr><th>Operador</th><th>Se lee como</th><th>Ejemplo</th></tr>
+      <tr><td><code class="inline">&amp;&amp;</code></td><td>Y (las dos deben cumplirse)</td><td><code class="inline">edad &gt;= 18 &amp;&amp; carnet == 1</code></td></tr>
+      <tr><td><code class="inline">||</code></td><td>O (basta con una)</td><td><code class="inline">pago == 1 || permiso == 1</code></td></tr>
+      <tr><td><code class="inline">!</code></td><td>NO (niega la condición)</td><td><code class="inline">!activo</code></td></tr>
+    </table>
+
+    <div class="card amarillo">
+      <h3>¡Cuidado!</h3>
+      <p><code class="inline">=</code> sirve para <b>guardar</b> un valor. <code class="inline">==</code> sirve para <b>comparar</b>. No son lo mismo.</p>
+    </div>
+  </section>
+
+  <!-- ================= 6. IF SIMPLE ================= -->
+  <section class="slide">
+    <h1 class="titulo">Estructura 1 · Solo <code class="inline">if</code> (una sola posibilidad)</h1>
+    <p>Se ejecuta el bloque <b>solo si</b> la condición es verdadera. Si es falsa, el programa sigue de largo.</p>
+
+    <h2 class="sub">Paso a paso</h2>
+    <div class="paso"><div class="num">1</div><div class="txt">Escribimos la palabra <code class="inline">if</code>.</div></div>
+    <div class="paso"><div class="num">2</div><div class="txt">Abrimos paréntesis y escribimos la condición: <code class="inline">(edad &gt;= 18)</code>.</div></div>
+    <div class="paso"><div class="num">3</div><div class="txt">Abrimos llaves <code class="inline">{ }</code> y dentro ponemos lo que debe pasar si se cumple.</div></div>
+
+    <pre>#include &lt;stdio.h&gt;
+
+int main() {
+    int edad = 20;
+
+    <span class="com">// Condición: ¿la edad es mayor o igual a 18?</span>
+    if (edad &gt;= 18) {
+        printf("Puede votar\n");
+    }
+
+    printf("Fin del programa\n");
+    return 0;
+}</pre>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Salida esperada</h3>
+        <p><code class="inline">Puede votar</code></p>
+        <p><code class="inline">Fin del programa</code></p>
+      </div>
+      <div class="card amarillo">
+        <h3>Reto rápido</h3>
+        <p>Cambia la edad a 15 y vuelve a compilar. ¿Por qué ya no aparece "Puede votar"?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7. IF ELSE ================= -->
+  <section class="slide">
+    <h1 class="titulo">Estructura 2 · <code class="inline">if – else</code> (dos caminos)</h1>
+    <p>Cuando hay <b>dos posibilidades</b> y siempre se debe ejecutar una de las dos.</p>
+
+    <h2 class="sub">Paso a paso</h2>
+    <div class="paso"><div class="num">1</div><div class="txt">Escribimos <code class="inline">if (condición)</code> con su bloque de llaves.</div></div>
+    <div class="paso"><div class="num">2</div><div class="txt">Después escribimos <code class="inline">else</code> (sin condición) y su bloque.</div></div>
+    <div class="paso"><div class="num">3</div><div class="txt">El bloque del <code class="inline">else</code> se ejecuta cuando la condición del <code class="inline">if</code> fue <b>falsa</b>.</div></div>
+
+    <pre>#include &lt;stdio.h&gt;
+
+int main() {
+    float nota = 3.8;
+
+    if (nota &gt;= 3.0) {
+        printf("Aprobado\n");
+    } else {
+        printf("Reprobado\n");
+    }
+
+    return 0;
+}</pre>
+
+    <div class="card">
+      <h3>Salida esperada</h3>
+      <p><code class="inline">Aprobado</code></p>
+    </div>
+
+    <div class="card amarillo">
+      <h3>Reto en clase</h3>
+      <p>Pide la nota con <code class="inline">scanf</code> y prueba con 2.5, 3.0 y 4.5. ¿Qué aparece en cada caso?</p>
+    </div>
+  </section>
+
+  <!-- ================= 8. IF ELSE IF ELSE ================= -->
+  <section class="slide">
+    <h1 class="titulo">Estructura 3 · <code class="inline">if – else if – else</code> (tres o más caminos)</h1>
+    <p>Se usa cuando hay <b>varias posibilidades</b>. Las condiciones se revisan <b>en orden</b>, de arriba hacia abajo.</p>
+
+    <div class="paso"><div class="num">1</div><div class="txt">Se revisa la primera condición del <code class="inline">if</code>.</div></div>
+    <div class="paso"><div class="num">2</div><div class="txt">Si es falsa, se revisa la siguiente con <code class="inline">else if</code>.</div></div>
+    <div class="paso"><div class="num">3</div><div class="txt">Se pueden poner varios <code class="inline">else if</code> seguidos.</div></div>
+    <div class="paso"><div class="num">4</div><div class="txt">El <code class="inline">else</code> final se ejecuta solo si <b>ninguna</b> anterior se cumplió.</div></div>
+
+    <pre>#include &lt;stdio.h&gt;
+
+int main() {
+    int edad;
+    printf("Ingrese su edad: ");
+    scanf("%d", &amp;edad);
+
+    if (edad &lt; 0) {
+        printf("Edad no valida\n");
+    } else if (edad &gt;= 18) {
+        printf("Puede votar\n");
+    } else {
+        printf("No puede votar aun\n");
+    }
+
+    return 0;
+}</pre>
+
+    <div class="card amarillo">
+      <h3>Importante</h3>
+      <p>El <b>orden</b> sí importa. Si pusiéramos <code class="inline">edad &gt;= 18</code> antes que <code class="inline">edad &lt; 0</code>, el programa nunca detectaría edades negativas.</p>
+    </div>
+  </section>
+
+  <!-- ================= 9. JERARQUÍA ================= -->
+  <section class="slide">
+    <h1 class="titulo">Jerarquía de operadores y uso de paréntesis</h1>
+    <p>Cuando una condición tiene varias operaciones, el computador las resuelve en un orden establecido.</p>
+
+    <table>
+      <tr><th>Orden</th><th>Operadores</th><th>Ejemplo</th></tr>
+      <tr><td>1 (primero)</td><td><code class="inline">( )</code></td><td><code class="inline">(a + b)</code></td></tr>
+      <tr><td>2</td><td><code class="inline">!</code></td><td><code class="inline">!activo</code></td></tr>
+      <tr><td>3</td><td><code class="inline">* / %</code></td><td><code class="inline">a * b</code></td></tr>
+      <tr><td>4</td><td><code class="inline">+ -</code></td><td><code class="inline">a - b</code></td></tr>
+      <tr><td>5</td><td><code class="inline">&lt; &lt;= &gt; &gt;=</code></td><td><code class="inline">a &lt; b</code></td></tr>
+      <tr><td>6</td><td><code class="inline">== !=</code></td><td><code class="inline">a == b</code></td></tr>
+      <tr><td>7</td><td><code class="inline">&amp;&amp;</code></td><td><code class="inline">a &amp;&amp; b</code></td></tr>
+      <tr><td>8 (último)</td><td><code class="inline">||</code></td><td><code class="inline">a || b</code></td></tr>
+    </table>
+
+    <div class="grid2" style="margin-top:12px;">
+      <div class="card gris">
+        <h3>Sin paréntesis (confuso)</h3>
+        <pre style="margin:6px 0 0;">if (a &gt; 0 &amp;&amp; b &gt; 0 || c == 5)</pre>
+      </div>
+      <div class="card">
+        <h3>Con paréntesis (claro)</h3>
+        <pre style="margin:6px 0 0;">if ( (a &gt; 0 &amp;&amp; b &gt; 0) || (c == 5) )</pre>
+      </div>
+    </div>
+
+    <p style="margin-top:12px;"><b>Regla de oro:</b> ante la duda, usa paréntesis. No cuesta nada y evita errores difíciles de encontrar.</p>
+  </section>
+
+  <!-- ================= 10. EJEMPLO GUÍA 6 ================= -->
+  <section class="slide">
+    <h1 class="titulo">Ejemplo completo · Validación de edad para votar</h1>
+    <span class="chip verde">Guía 6 – Estructuras Selectivas</span>
+
+    <p>Este es el ejemplo integrador de la guía. Reúne todo lo que hemos visto: lectura de datos, validación, operadores lógicos y <code class="inline">if – else if – else</code>.</p>
+
+    <pre>#include &lt;stdio.h&gt;
+
+int main() {
+    int edad;
+
+    printf("Ingrese su edad: ");
+    if (scanf("%d", &amp;edad) != 1) {          <span class="com">// validamos que sea un número</span>
+        printf("Error: debe escribir un numero\n");
+        return 1;
+    }
+
+    if (edad &lt; 0 || edad &gt; 120) {           <span class="com">// validación de rango</span>
+        printf("Edad no valida\n");
+    } else if (edad &gt;= 18) {
+        printf("Puede ejercer su derecho al voto\n");
+    } else {
+        printf("Aun no puede votar. Le faltan %d anios\n", 18 - edad);
+    }
+
+    return 0;
+}</pre>
+
+    <div class="grid2">
+      <div class="card amarillo">
+        <h3>Qué practicamos aquí</h3>
+        <ul class="lista">
+          <li>Lectura de datos con <code class="inline">scanf</code>.</li>
+          <li>Validación de datos incorrectos.</li>
+          <li>Operador lógico <code class="inline">||</code>.</li>
+          <li>Estructura <code class="inline">if – else if – else</code>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Pruebas sugeridas</h3>
+        <ul class="lista">
+          <li>Edad -5 → "Edad no valida".</li>
+          <li>Edad 15 → "Aun no puede votar...".</li>
+          <li>Edad 18 → "Puede ejercer su derecho al voto".</li>
+          <li>Escribir "abc" → mensaje de error.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 11. RETOS ================= -->
+  <section class="slide">
+    <h1 class="titulo">Retos en clase · Programas y juegos lógicos</h1>
+    <p>Trabaja en parejas. Compila y ejecuta cada reto antes de pasar al siguiente.</p>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Reto 1 · Clasificador de notas</h3>
+        <p>Pide una nota de 0 a 5 y muestra: Superior (4.6-5.0), Alto (4.0-4.5), Básico (3.0-3.9) o Bajo (menor a 3.0).</p>
+      </div>
+      <div class="card">
+        <h3>Reto 2 · Juego: adivina el número</h3>
+        <p>Guarda un número en una variable. Pide al usuario adivinarlo e indica si es mayor, menor o si acertó.</p>
+      </div>
+      <div class="card">
+        <h3>Reto 3 · Calculadora de edad</h3>
+        <p>Pide el año de nacimiento y con el año actual indica si la persona es niño, adolescente, adulto o adulto mayor.</p>
+      </div>
+      <div class="card">
+        <h3>Reto 4 · Acceso al laboratorio</h3>
+        <p>Solo entra quien tiene carné (<code class="inline">1</code>) y uniforme completo (<code class="inline">1</code>). Usa <code class="inline">&amp;&amp;</code> para la condición.</p>
+      </div>
+    </div>
+
+    <div class="card amarillo" style="margin-top:14px;">
+      <h3>Pista para todos los retos</h3>
+      <p>Primero escribe la condición en español, luego tradúcela a C y por último agrégale paréntesis si es necesario.</p>
+    </div>
+  </section>
+
+  <!-- ================= 12. TEMA 4 ================= -->
+  <section class="slide">
+    <h1 class="titulo">Tema 4 · Proyecto: Soluciones para la comunidad</h1>
+    <span class="chip">Nutrición de los habitantes de mi comunidad</span>
+
+    <p>Aplicaremos todo lo aprendido —sintaxis básica, operadores y estructuras condicionales— para crear un programa en C que aborde una problemática real de <b>nutrición</b> en nuestra comunidad.</p>
+
+    <h2 class="sub">El programa debe incluir</h2>
+    <ul class="lista">
+      <li><b>Lectura de datos:</b> pedir la información al usuario con <code class="inline">scanf</code>.</li>
+      <li><b>Procesamiento de información:</b> hacer cálculos con operadores.</li>
+      <li><b>Presentación de resultados:</b> mostrar conclusiones claras con <code class="inline">printf</code>.</li>
+      <li><b>Decisiones:</b> usar <code class="inline">if – else if – else</code> para clasificar los resultados.</li>
+      <li><b>Validaciones:</b> asegurar que el usuario ingrese datos correctos.</li>
+    </ul>
+
+    <div class="card amarillo">
+      <h3>El docente acompaña</h3>
+      <p>Se entregan material de apoyo y guías paso a paso para construir el programa secuencial.</p>
+    </div>
+  </section>
+
+  <!-- ================= 13. RUTA DEL PROYECTO ================= -->
+  <section class="slide">
+    <h1 class="titulo">Ruta del proyecto · 4 etapas</h1>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Etapa 1 · Diagrama de flujo</h3>
+        <p>Dibujamos el inicio, la entrada de datos, la decisión y el fin.</p>
+        <p style="font-family:Consolas,monospace;font-size:13.5px;background:#fff;padding:10px;border-radius:8px;">
+          INICIO → Leer peso y talla → ¿Datos válidos? → Calcular IMC → Mostrar resultado → FIN
+        </p>
+      </div>
+      <div class="card">
+        <h3>Etapa 2 · Pseudocódigo</h3>
+        <pre style="margin:6px 0 0;">Inicio
+  Escribir "Peso en kg:"
+  Leer peso
+  Escribir "Talla en metros:"
+  Leer talla
+  Si peso &lt;= 0 o talla &lt;= 0 Entonces
+     Escribir "Datos no validos"
+  SiNo
+     imc = peso / (talla * talla)
+     Escribir imc
+  FinSi
+Fin</pre>
+      </div>
+      <div class="card">
+        <h3>Etapa 3 · Traducción a C</h3>
+        <p>Convertimos cada línea del pseudocódigo en instrucciones de lenguaje C respetando la sintaxis y los punto y coma.</p>
+      </div>
+      <div class="card">
+        <h3>Etapa 4 · Validaciones</h3>
+        <p>Agregamos condiciones que impidan continuar con datos incorrectos: valores negativos, ceros o texto en lugar de números.</p>
+      </div>
+    </div>
+
+    <div class="card amarillo" style="margin-top:12px;">
+      <h3>Cálculos que debe hacer el programa</h3>
+      <p>Sumas, restas, promedios y decisiones basadas en condiciones.</p>
+    </div>
+  </section>
+
+  <!-- ================= 14. EJEMPLO IMC ================= -->
+  <section class="slide">
+    <h1 class="titulo">Ejemplo guía · Calculadora nutricional (IMC)</h1>
+
+    <pre>#include &lt;stdio.h&gt;
+
+int main() {
+    float peso, talla, imc;
+
+    printf("Peso en kg: ");
+    scanf("%f", &amp;peso);
+    printf("Talla en metros: ");
+    scanf("%f", &amp;talla);
+
+    <span class="com">// VALIDACIÓN de datos</span>
+    if (peso &lt;= 0 || talla &lt;= 0) {
+        printf("Datos no validos. Intente de nuevo.\n");
+    } else {
+        imc = peso / (talla * talla);        <span class="com">// procesamiento</span>
+
+        printf("Su IMC es: %.2f\n", imc);    <span class="com">// resultado</span>
+
+        if (imc &lt; 18.5) {
+            printf("Clasificacion: Bajo peso\n");
+        } else if (imc &lt; 25.0) {
+            printf("Clasificacion: Peso normal\n");
+        } else if (imc &lt; 30.0) {
+            printf("Clasificacion: Sobrepeso\n");
+        } else {
+            printf("Clasificacion: Obesidad\n");
+        }
+
+        printf("Recomendacion: consulte con el area de salud del colegio.\n");
+    }
+
+    return 0;
+}</pre>
+
+    <div class="card amarillo">
+      <h3>Para tu proyecto</h3>
+      <p>Puedes cambiar el cálculo por: promedio de comidas diarias, consumo de agua, porciones de fruta o comparación con la canasta familiar.</p>
+    </div>
+  </section>
+
+  <!-- ================= 15. CIERRE ================= -->
+  <section class="slide">
+    <h1 class="titulo">Cierre de la clase</h1>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Hoy aprendimos</h3>
+        <ul class="lista">
+          <li>Qué es tomar decisiones en un programa.</li>
+          <li>Operadores relacionales y lógicos.</li>
+          <li>Las estructuras <code class="inline">if</code>, <code class="inline">if – else</code> y <code class="inline">if – else if – else</code>.</li>
+          <li>La jerarquía de operadores y el uso de paréntesis.</li>
+          <li>Validación de datos para programas confiables.</li>
+        </ul>
+      </div>
+      <div class="card amarillo">
+        <h3>Compromiso para la próxima clase</h3>
+        <ul class="lista">
+          <li>Traer el diagrama de flujo del proyecto de nutrición.</li>
+          <li>Traer el pseudocódigo escrito a mano.</li>
+          <li>Traer el archivo <code class="inline">.c</code> funcionando en VS Code o Sublime Text.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="frase" style="margin-top:20px;">
+      <span class="cita">«Y todo lo que hacéis, sea de palabra o de hecho, hacedlo todo en el nombre del Señor Jesús, dando gracias a Dios Padre por medio de él».</span>
+      <span class="ref">Colosenses 3:17</span>
+    </div>
+
+    <p style="text-align:center;font-size:19px;font-weight:800;color:var(--verde);margin-top:18px;">
+      ¡Gracias por su atención! · Docente Juan Adrián Villani · Grado 7°
+    </p>
+  </section>
+
+</main>
+
+<div id="barra"><span id="barraFill"></span></div>
+
+<footer>
+  <button class="nav-btn" id="btnPrev">◀ Anterior</button>
+  <span class="pista">Usa las flechas ← → o la barra espaciadora para navegar</span>
+  <span id="contador">1 / 15</span>
+  <button class="nav-btn" id="btnNext">Siguiente ▶</button>
+</footer>
+
+<script>
+  /* ============ NAVEGACIÓN ENTRE DIAPOSITIVAS ============ */
+  const slides   = document.querySelectorAll('.slide');
+  const barra    = document.getElementById('barraFill');
+  const contador = document.getElementById('contador');
+  const btnPrev  = document.getElementById('btnPrev');
+  const btnNext  = document.getElementById('btnNext');
+  let actual = 0;
+
+  function mostrar(i){
+    if (i < 0) i = 0;
+    if (i > slides.length - 1) i = slides.length - 1;
+    actual = i;
+
+    slides.forEach((s, k) => s.classList.toggle('active', k === actual));
+
+    contador.textContent = (actual + 1) + ' / ' + slides.length;
+    barra.style.width = ((actual + 1) / slides.length * 100) + '%';
+    btnPrev.disabled = (actual === 0);
+    btnNext.disabled = (actual === slides.length - 1);
+
+    slides[actual].scrollTop = 0;
+  }
+
+  btnPrev.addEventListener('click', () => mostrar(actual - 1));
+  btnNext.addEventListener('click', () => mostrar(actual + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault(); mostrar(actual + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); mostrar(actual - 1);
+    }
+    if (e.key === 'Home') { e.preventDefault(); mostrar(0); }
+    if (e.key === 'End')  { e.preventDefault(); mostrar(slides.length - 1); }
+  });
+
+  /* ============ INICIO ============ */
+  mostrar(0);
+</script>
+</body>
+</html>
